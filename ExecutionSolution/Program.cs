@@ -13,30 +13,41 @@ namespace ExecutionSolution
         {
             Console.WriteLine("Iniciando Demo");
 
+            var procesoNodo5 = new ProcesoQueued {ProcesoId = 5, Descripcion = "Nodo5"};
+
             var plantilla = new PlantillaQueued
             {
-                Procesos = new List<ProcesoQueued>
+                ProcesosQueued = new List<ProcesoQueued>
                 {
-                    new ProcesoQueued {ProcesoId = 1, Descripcion = "Nodo1"},
-                    new ProcesoQueued {ProcesoId = 2, Descripcion = "Nodo2"},
-                    new ProcesoQueued {ProcesoId = 3, Descripcion = "Nodo3"},
-                    new ProcesoQueued {ProcesoId = 4, Descripcion = "Nodo4"},
-                    new ProcesoQueued {ProcesoId = 5, Descripcion = "Nodo5"}
-                },
-                DependenciaProcesos = new List<LinkProcesoQueued>
-                {
-                    new LinkProcesoQueued {From = 1, To = 3},
-                    new LinkProcesoQueued {From = 1, To = 4},
-                    new LinkProcesoQueued {From = 2, To = 5},
-                    new LinkProcesoQueued {From = 3, To = 5}
+                    new ProcesoQueued
+                    {
+                        ProcesoId = 1,
+                        Descripcion = "Nodo1",
+                        ProcesosQueued = new List<ProcesoQueued>
+                        {
+                            new ProcesoQueued
+                            {
+                                ProcesoId = 3,
+                                Descripcion = "Nodo3",
+                                ProcesosQueued = new List<ProcesoQueued> {procesoNodo5}
+
+                            },
+                            new ProcesoQueued {ProcesoId = 4, Descripcion = "Nodo4"},
+                        }
+                    },
+                    new ProcesoQueued
+                    {
+                        ProcesoId = 2,
+                        Descripcion = "Nodo2",
+                        ProcesosQueued = new List<ProcesoQueued> {procesoNodo5}
+                    }
                 }
             };
 
             Task.Run(() => plantilla.IniciarEjecucion());
-
             var cancelar = Console.ReadLine();
 
-            if(cancelar == "exit")
+            if (cancelar == "exit")
                 plantilla.Cancelar();
 
             Console.ReadLine();

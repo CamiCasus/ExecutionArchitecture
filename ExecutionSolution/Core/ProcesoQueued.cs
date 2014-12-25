@@ -1,30 +1,88 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
+using ExecutionSolution.Extensions;
 
 namespace ExecutionSolution.Core
 {
-    public class ProcesoQueued
+    public class ProcesoQueued : IObservable<ProcesoQueued>
     {
         public int ProcesoId { get; set; }
         public string Descripcion { get; set; }
+        public EstadoProceso Estado { get; set; }
+        public IEnumerable<ProcesoQueued> ProcesosQueued { get; set; }
 
-        public bool Ejecutar(CancellationTokenSource tokenSource)
+        private readonly List<IObserver<ProcesoQueued>> _observers;
+
+        protected CancellationTokenSource TokenSource;
+
+        public ProcesoQueued()
         {
-            var tareaProceso = Task.Factory.StartNew(() => EjecutarProceso(), tokenSource.Token);
+            Estado = EstadoProceso.SinProcesar;
+            _observers = new List<IObserver<ProcesoQueued>>();
+        }
 
-            tareaProceso.Wait(tokenSource.Token);
-            Console.WriteLine("El proceso {0} se ejecuto correctamente", ProcesoId);
+        public void Ejecutar(CancellationTokenSource tokenSource)
+        {
+            TokenSource = tokenSource;
 
-            return true;
+            if (tokenSource.Token.IsCancellationRequested)
+            {
+                tokenSource.Token.ThrowIfCancellationRequested();
+            }
+
+            if (!EsPosibleEjecutarProceso()) return;
+
+            GestionarEjecucion();
+        }
+
+        private void GestionarEjecucion()
+        {
+            Estado = EstadoProceso.Procesando;
+            Notify();
+
+            if (EjecutarProceso())
+            {
+                ProcesosQueued.GestionarProcesos(TokenSource);
+            }
         }
 
         protected virtual bool EjecutarProceso()
         {
             var aleatorio = new Random();
-            Thread.Sleep(ProcesoId == 2 ? 3000 : aleatorio.Next(10000, 20000));
+
+            var duracionEjecucion = ProcesoId == 2 ? 3000 : aleatorio.Next(5000, 8000);
+
+            Thread.Sleep(duracionEjecucion);
+
+            Estado = EstadoProceso.Exito;
+            Notify();
 
             return true;
+        }
+
+        private bool EsPosibleEjecutarProceso()
+        {
+            return Estado == EstadoProceso.SinProcesar;
+        }
+
+        public IDisposable Subscribe(IObserver<ProcesoQueued> observer)
+        {
+            if (!_observers.Contains(observer))
+            {
+                _observers.Add(observer);
+                //observer.OnNext(this);
+            }
+
+            return new Unsubscriber<ProcesoQueued>(_observers, observer);
+        }
+
+        private void Notify()
+        {
+            foreach (var observer in _observers)
+            {
+                observer.OnNext(this);
+            }
         }
     }
 }

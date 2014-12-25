@@ -42,9 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\LinkProcesoQueued.cs" />
+    <Compile Include="Core\EstadoProceso.cs" />
     <Compile Include="Core\PlantillaQueued.cs" />
+    <Compile Include="Core\ProcesoNotificador.cs" />
     <Compile Include="Core\ProcesoQueued.cs" />
+    <Compile Include="Core\Unsuscriber.cs" />
+    <Compile Include="Extensions\ProcesoListExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
