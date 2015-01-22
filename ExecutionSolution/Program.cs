@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ExecutionSolution.Core;
 
@@ -13,7 +11,7 @@ namespace ExecutionSolution
         {
             Console.WriteLine("Iniciando Demo");
 
-            var procesoNodo5 = new ProcesoQueued {ProcesoId = 5, Descripcion = "Nodo5"};
+            var procesoNodo5 = new ProcesoQueued { ProcesoId = 5, Descripcion = "Nodo5" };
 
             var plantilla = new PlantillaQueued
             {
@@ -23,6 +21,7 @@ namespace ExecutionSolution
                     {
                         ProcesoId = 1,
                         Descripcion = "Nodo1",
+                        
                         ProcesosQueued = new List<ProcesoQueued>
                         {
                             new ProcesoQueued

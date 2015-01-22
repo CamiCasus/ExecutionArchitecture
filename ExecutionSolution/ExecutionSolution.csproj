@@ -43,11 +43,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\EstadoProceso.cs" />
+    <Compile Include="Core\ParametroQueued.cs" />
     <Compile Include="Core\PlantillaQueued.cs" />
     <Compile Include="Core\ProcesoNotificador.cs" />
     <Compile Include="Core\ProcesoQueued.cs" />
     <Compile Include="Core\Unsuscriber.cs" />
+    <Compile Include="Extensions\ParametroListExtension.cs" />
     <Compile Include="Extensions\ProcesoListExtension.cs" />
+    <Compile Include="Messages\Notificacion.cs" />
+    <Compile Include="Messages\PeticionParametroNotificacion.cs" />
+    <Compile Include="Messages\RespuestaParametroNotificacion.cs" />
+    <Compile Include="NotificadorExterno\NotificadorExterno.cs" />
+    <Compile Include="Parametros\ParametroEjecucion.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

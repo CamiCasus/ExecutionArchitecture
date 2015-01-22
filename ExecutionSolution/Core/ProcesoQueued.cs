@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ExecutionSolution.Extensions;
 
@@ -11,9 +12,11 @@ namespace ExecutionSolution.Core
         public string Descripcion { get; set; }
         public EstadoProceso Estado { get; set; }
         public IEnumerable<ProcesoQueued> ProcesosQueued { get; set; }
+        public IEnumerable<ParametroQueued> ParametrosQueued { get; set; }
+
+        
 
         private readonly List<IObserver<ProcesoQueued>> _observers;
-
         protected CancellationTokenSource TokenSource;
 
         public ProcesoQueued()
@@ -36,17 +39,6 @@ namespace ExecutionSolution.Core
             GestionarEjecucion();
         }
 
-        private void GestionarEjecucion()
-        {
-            Estado = EstadoProceso.Procesando;
-            Notify();
-
-            if (EjecutarProceso())
-            {
-                ProcesosQueued.GestionarProcesos(TokenSource);
-            }
-        }
-
         protected virtual bool EjecutarProceso()
         {
             var aleatorio = new Random();
@@ -61,23 +53,43 @@ namespace ExecutionSolution.Core
             return true;
         }
 
-        private bool EsPosibleEjecutarProceso()
-        {
-            return Estado == EstadoProceso.SinProcesar;
-        }
-
         public IDisposable Subscribe(IObserver<ProcesoQueued> observer)
         {
             if (!_observers.Contains(observer))
             {
                 _observers.Add(observer);
-                //observer.OnNext(this);
             }
 
             return new Unsubscriber<ProcesoQueued>(_observers, observer);
         }
 
-        private void Notify()
+        private void GestionarEjecucion()
+        {
+            Estado = EstadoProceso.Procesando;
+            Notify();
+
+            GestionarParametrosEntrada();
+
+            if (EjecutarProceso())
+            {
+                ProcesosQueued.GestionarProcesos(TokenSource);
+            }
+        }
+
+        private void GestionarParametrosEntrada()
+        {
+            if (ParametrosQueued != null && ParametrosQueued.Any())
+            {
+                ParametrosQueued.GestionarParametros(this);
+            }
+        }
+
+        private bool EsPosibleEjecutarProceso()
+        {
+            return Estado == EstadoProceso.SinProcesar;
+        }
+
+        public void Notify()
         {
             foreach (var observer in _observers)
             {

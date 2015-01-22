@@ -38,8 +38,10 @@ namespace ExecutionSolution.Extensions
                 Console.WriteLine("\nAggregateException thrown with the following inner exceptions:");
                 foreach (var v in e.InnerExceptions)
                 {
-                    if (v is TaskCanceledException)
-                        Console.WriteLine("   TaskCanceledException: Task {0}", ((TaskCanceledException)v).Task.Id);
+                    var exception = v as TaskCanceledException;
+
+                    if (exception != null)
+                        Console.WriteLine("   TaskCanceledException: Task {0}", exception.Task.Id);
                     else
                         Console.WriteLine("   Exception: {0}", v.GetType().Name);
                 }
