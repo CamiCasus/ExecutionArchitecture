@@ -22,7 +22,8 @@ namespace ExecutionSolution.Core
      
         public void IniciarEjecucion()
         {
-            _procesoNotificador = new ProcesoNotificador(ProcesosQueued);
+            _procesoNotificador = new ProcesoNotificador();
+            _procesoNotificador.SuscribeProcesos(ProcesosQueued);
 
             ProcesosQueued.GestionarProcesos(_cancellationToken);
             Console.WriteLine("Se termino la ejecucion de la plantilla");
@@ -30,7 +31,6 @@ namespace ExecutionSolution.Core
 
         public void Cancelar()
         {
-            //Console.WriteLine("Se mando a cancelar la plantilla");
             _cancellationToken.Cancel();
         }
     }

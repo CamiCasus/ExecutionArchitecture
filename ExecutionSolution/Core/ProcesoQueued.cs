@@ -11,10 +11,9 @@ namespace ExecutionSolution.Core
         public int ProcesoId { get; set; }
         public string Descripcion { get; set; }
         public EstadoProceso Estado { get; set; }
+        public PlantillaQueued PlantillaQueued { get; set; }
         public IEnumerable<ProcesoQueued> ProcesosQueued { get; set; }
         public IEnumerable<ParametroQueued> ParametrosQueued { get; set; }
-
-        
 
         private readonly List<IObserver<ProcesoQueued>> _observers;
         protected CancellationTokenSource TokenSource;
@@ -68,19 +67,11 @@ namespace ExecutionSolution.Core
             Estado = EstadoProceso.Procesando;
             Notify();
 
-            GestionarParametrosEntrada();
+            ParametroManager.GestionarParametrosProceso(this);
 
             if (EjecutarProceso())
             {
                 ProcesosQueued.GestionarProcesos(TokenSource);
-            }
-        }
-
-        private void GestionarParametrosEntrada()
-        {
-            if (ParametrosQueued != null && ParametrosQueued.Any())
-            {
-                ParametrosQueued.GestionarParametros(this);
             }
         }
 

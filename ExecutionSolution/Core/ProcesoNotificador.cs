@@ -5,11 +5,6 @@ namespace ExecutionSolution.Core
 {
     public class ProcesoNotificador : IObserver<ProcesoQueued>
     {
-        public ProcesoNotificador(IEnumerable<ProcesoQueued> procesosQueued)
-        {
-            Suscribe(procesosQueued);
-        }
-
         private void Suscribe(IEnumerable<ProcesoQueued> procesosQueued)
         {
             if (procesosQueued == null) return;
@@ -19,6 +14,11 @@ namespace ExecutionSolution.Core
                 procesoQueued.Subscribe(this);
                 Suscribe(procesoQueued.ProcesosQueued);
             }
+        }
+
+        public void SuscribeProcesos(IEnumerable<ProcesoQueued> procesosQueued)
+        {
+            Suscribe(procesosQueued);
         }
 
         public void OnCompleted()

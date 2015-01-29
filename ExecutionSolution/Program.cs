@@ -11,35 +11,35 @@ namespace ExecutionSolution
         {
             Console.WriteLine("Iniciando Demo");
 
-            var procesoNodo5 = new ProcesoQueued { ProcesoId = 5, Descripcion = "Nodo5" };
+            var plantilla = new PlantillaQueued();
+             var procesoNodo5 = new ProcesoQueued { ProcesoId = 5, Descripcion = "Nodo5", PlantillaQueued = plantilla};
 
-            var plantilla = new PlantillaQueued
+            plantilla.ProcesosQueued = new List<ProcesoQueued>
             {
-                ProcesosQueued = new List<ProcesoQueued>
+                new ProcesoQueued
                 {
-                    new ProcesoQueued
+                    ProcesoId = 1,
+                    Descripcion = "Nodo1",
+                    PlantillaQueued = plantilla,
+                    ProcesosQueued = new List<ProcesoQueued>
                     {
-                        ProcesoId = 1,
-                        Descripcion = "Nodo1",
-                        
-                        ProcesosQueued = new List<ProcesoQueued>
+                        new ProcesoQueued
                         {
-                            new ProcesoQueued
-                            {
-                                ProcesoId = 3,
-                                Descripcion = "Nodo3",
-                                ProcesosQueued = new List<ProcesoQueued> {procesoNodo5}
+                            ProcesoId = 3,
+                            Descripcion = "Nodo3",
+                            PlantillaQueued = plantilla,
+                            ProcesosQueued = new List<ProcesoQueued> {procesoNodo5}
 
-                            },
-                            new ProcesoQueued {ProcesoId = 4, Descripcion = "Nodo4"},
-                        }
-                    },
-                    new ProcesoQueued
-                    {
-                        ProcesoId = 2,
-                        Descripcion = "Nodo2",
-                        ProcesosQueued = new List<ProcesoQueued> {procesoNodo5}
+                        },
+                        new ProcesoQueued {ProcesoId = 4, Descripcion = "Nodo4", PlantillaQueued = plantilla},
                     }
+                },
+                new ProcesoQueued
+                {
+                    ProcesoId = 2,
+                    Descripcion = "Nodo2",
+                    PlantillaQueued = plantilla,
+                    ProcesosQueued = new List<ProcesoQueued> {procesoNodo5}
                 }
             };
 
