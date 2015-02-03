@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ExecutionSolution.Core;
@@ -16,18 +17,18 @@ namespace ExecutionSolution.Extensions
             if (procesos == null)
                 return;
 
-            foreach (ProcesoQueued procesoQueued in procesos)
+            foreach (
+                var taskProceso in
+                    procesos.Select(
+                        queued => Task.Factory.StartNew(() => queued.Ejecutar(tokenSource), tokenSource.Token)))
             {
-                ProcesoQueued queued = procesoQueued;
-                var taskProceso = Task.Factory.StartNew(() => queued.Ejecutar(tokenSource), tokenSource.Token);
-
                 processBag.Add(taskProceso);
             }
 
             WaitToFinish(processBag);
         }
 
-        private static void WaitToFinish(ConcurrentBag<Task> concurrentBag)
+        private static void WaitToFinish(IProducerConsumerCollection<Task> concurrentBag)
         {
             try
             {

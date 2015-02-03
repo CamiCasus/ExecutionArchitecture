@@ -10,7 +10,7 @@ namespace ExecutionSolution.Core
         public string EjecucionId { get; set; }
         public int PlantillaId { get; set; }
 
-        public IEnumerable<ProcesoQueued> ProcesosQueued { get; set; }
+        public List<ProcesoQueued> ProcesosQueued { get; set; }
 
         private readonly CancellationTokenSource _cancellationToken;
         private ProcesoNotificador _procesoNotificador;

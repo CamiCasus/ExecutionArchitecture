@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
 using ExecutionSolution.Messages;
 using ExecutionSolution.Notificador;
 
@@ -10,6 +9,11 @@ namespace ExecutionSolution.Core
     public static class ParametroManager
     {
         public static ConcurrentDictionary<int, ConcurrentBag<ParametroQueued>> ParametrosPeticionUsuarioPorProceso { get; set; }
+
+        static ParametroManager()
+        {
+            ParametrosPeticionUsuarioPorProceso = new ConcurrentDictionary<int, ConcurrentBag<ParametroQueued>>();
+        }
 
         public static void GestionarParametrosProceso(ProcesoQueued procesoQueued)
         {
@@ -61,8 +65,7 @@ namespace ExecutionSolution.Core
             };
 
             NotificadorExterno.EnviarNotificacion(nuevoMensajePeticionParametro);
-
-            //detener hilo
+            procesoQueued.Pausar();
         }
     }
 }

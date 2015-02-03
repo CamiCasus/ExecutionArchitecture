@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using ExecutionSolution.Extensions;
 
@@ -12,10 +11,11 @@ namespace ExecutionSolution.Core
         public string Descripcion { get; set; }
         public EstadoProceso Estado { get; set; }
         public PlantillaQueued PlantillaQueued { get; set; }
-        public IEnumerable<ProcesoQueued> ProcesosQueued { get; set; }
-        public IEnumerable<ParametroQueued> ParametrosQueued { get; set; }
+        public List<ProcesoQueued> ProcesosQueued { get; set; }
+        public List<ParametroQueued> ParametrosQueued { get; set; }
 
         private readonly List<IObserver<ProcesoQueued>> _observers;
+        private readonly ManualResetEventSlim _pauseEvent = new ManualResetEventSlim(true);
         protected CancellationTokenSource TokenSource;
 
         public ProcesoQueued()
@@ -35,7 +35,7 @@ namespace ExecutionSolution.Core
 
             if (!EsPosibleEjecutarProceso()) return;
 
-            GestionarEjecucion();
+           GestionarEjecucion();
         }
 
         protected virtual bool EjecutarProceso()
@@ -86,6 +86,17 @@ namespace ExecutionSolution.Core
             {
                 observer.OnNext(this);
             }
+        }
+
+        public void Pausar()
+        {
+            _pauseEvent.Reset();
+            _pauseEvent.Wait(TokenSource.Token);
+        }
+
+        public void Reanudar()
+        {
+            _pauseEvent.Set();
         }
     }
 }
