@@ -6,7 +6,7 @@ namespace ExecutionSolution.Parametros
     {
         public override void CargarParametro()
         {
-            ParametroManager.RegistrarPeticionParametro(ProcesoQueued, this);
+            ProcesoQueued.ParametroManager.RegistrarPeticionParametro(this);
         }
     }
 }

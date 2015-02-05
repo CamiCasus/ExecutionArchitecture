@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{65D727B3-59BE-4000-A1E7-23C72A394CC0}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{BFD7D3F1-99E8-4A2C-89B3-8F6789F72349}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExecutionSolution</RootNamespace>
-    <AssemblyName>ExecutionSolution</AssemblyName>
+    <RootNamespace>ExecutionSolution.Test</RootNamespace>
+    <AssemblyName>ExecutionSolution.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,9 +32,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,29 +42,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccionesEstados\EsperaParametroAccion.cs" />
-    <Compile Include="AccionesEstados\IAccion.cs" />
-    <Compile Include="Core\EstadoProceso.cs" />
-    <Compile Include="Core\ParametroManager.cs" />
-    <Compile Include="Core\ParametroQueued.cs" />
-    <Compile Include="Core\PlantillaQueued.cs" />
-    <Compile Include="Core\ProcesoNotificador.cs" />
-    <Compile Include="Core\ProcesoQueued.cs" />
-    <Compile Include="Core\Unsuscriber.cs" />
-    <Compile Include="EjecucionesStorage.cs" />
-    <Compile Include="Extensions\ProcesoListExtension.cs" />
-    <Compile Include="Messages\ParametroProcesoMessage.cs" />
-    <Compile Include="Peticiones\EjecucionPlantillaPeticion.cs" />
-    <Compile Include="Notificador\PeticionParametroNotificacion.cs" />
-    <Compile Include="Notificador\INotificacion.cs" />
-    <Compile Include="Notificador\INotificador.cs" />
-    <Compile Include="Peticiones\IPeticion.cs" />
-    <Compile Include="Parametros\ParametroEjecucion.cs" />
-    <Compile Include="Parametros\ParametroEjecucionUsuario.cs" />
+    <Compile Include="Fakes\FakeNotificador.cs" />
+    <Compile Include="Fakes\CuboProcesoQueued.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExecutionSolution\ExecutionSolution.csproj">
+      <Project>{65d727b3-59be-4000-a1e7-23c72a394cc0}</Project>
+      <Name>ExecutionSolution</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

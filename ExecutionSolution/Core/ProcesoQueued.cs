@@ -18,9 +18,12 @@ namespace ExecutionSolution.Core
         private readonly ManualResetEventSlim _pauseEvent = new ManualResetEventSlim(true);
         protected CancellationTokenSource TokenSource;
 
+        public ParametroManager ParametroManager { get; set; }
+
         public ProcesoQueued()
         {
             Estado = EstadoProceso.SinProcesar;
+            ParametroManager = new ParametroManager(this);
             _observers = new List<IObserver<ProcesoQueued>>();
         }
 
@@ -67,7 +70,7 @@ namespace ExecutionSolution.Core
             Estado = EstadoProceso.Procesando;
             Notify();
 
-            ParametroManager.GestionarParametrosProceso(this);
+            ParametroManager.GestionarParametrosProceso();
 
             if (EjecutarProceso())
             {
@@ -92,6 +95,14 @@ namespace ExecutionSolution.Core
         {
             _pauseEvent.Reset();
             _pauseEvent.Wait(TokenSource.Token);
+        }
+
+        public void EsperarRespuestaParametros()
+        {
+            Estado = EstadoProceso.EsperandoParametro;
+            Notify();
+
+            Pausar();
         }
 
         public void Reanudar()

@@ -7,6 +7,7 @@
         Exito,
         Error,
         Omitido,
-        Pausado
+        Pausado,
+        EsperandoParametro
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using ExecutionSolution.Extensions;
+using ExecutionSolution.Notificador;
 
 namespace ExecutionSolution.Core
 {
@@ -9,29 +10,38 @@ namespace ExecutionSolution.Core
     {
         public string EjecucionId { get; set; }
         public int PlantillaId { get; set; }
-
         public List<ProcesoQueued> ProcesosQueued { get; set; }
+        public event EventHandler<EventArgs> Finish;
 
         private readonly CancellationTokenSource _cancellationToken;
         private ProcesoNotificador _procesoNotificador;
+        private readonly INotificador _notificador;
 
-        public PlantillaQueued()
+        public PlantillaQueued(INotificador notificador)
         {
             _cancellationToken = new CancellationTokenSource();
+            _notificador = notificador;
         }
-     
+
         public void IniciarEjecucion()
         {
-            _procesoNotificador = new ProcesoNotificador();
+            _procesoNotificador = new ProcesoNotificador(_notificador);
             _procesoNotificador.SuscribeProcesos(ProcesosQueued);
 
             ProcesosQueued.GestionarProcesos(_cancellationToken);
-            Console.WriteLine("Se termino la ejecucion de la plantilla");
+
+            OnFinish();
         }
 
         public void Cancelar()
         {
             _cancellationToken.Cancel();
+        }
+
+        private void OnFinish()
+        {
+            if (Finish != null)
+                Finish(this, new EventArgs());
         }
     }
 }

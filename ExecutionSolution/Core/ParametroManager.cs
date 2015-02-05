@@ -1,62 +1,48 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Linq;
 using ExecutionSolution.Messages;
+using System;
 using ExecutionSolution.Notificador;
 
 namespace ExecutionSolution.Core
 {
-    public static class ParametroManager
+    public class ParametroManager
     {
-        public static ConcurrentDictionary<int, ConcurrentBag<ParametroQueued>> ParametrosPeticionUsuarioPorProceso { get; set; }
+        public ConcurrentBag<ParametroQueued> ParametrosPeticionUsuario { get; set; }
+        public ProcesoQueued ProcesoQueued { get; set; }
 
-        static ParametroManager()
+        public ParametroManager(ProcesoQueued procesoQueued)
         {
-            ParametrosPeticionUsuarioPorProceso = new ConcurrentDictionary<int, ConcurrentBag<ParametroQueued>>();
+            ProcesoQueued = procesoQueued;
+            ParametrosPeticionUsuario = new ConcurrentBag<ParametroQueued>();
         }
 
-        public static void GestionarParametrosProceso(ProcesoQueued procesoQueued)
+        public void GestionarParametrosProceso()
         {
-            if (procesoQueued.ParametrosQueued == null || !procesoQueued.ParametrosQueued.Any()) return;
+            if (ProcesoQueued.ParametrosQueued == null || !ProcesoQueued.ParametrosQueued.Any()) return;
 
-            foreach (ParametroQueued parametroQueued in procesoQueued.ParametrosQueued)
+            foreach (ParametroQueued parametroQueued in ProcesoQueued.ParametrosQueued)
             {
                 parametroQueued.CargarParametro();
             }
 
-            GenerarMensajePeticionParametros(procesoQueued);
+            if (ParametrosPeticionUsuario.Count > 0)
+                ProcesoQueued.EsperarRespuestaParametros();
         }
 
-        public static void RegistrarPeticionParametro(ProcesoQueued procesoQueued, ParametroQueued parametroQueued)
+        public void RegistrarPeticionParametro(ParametroQueued parametroQueued)
         {
-            ConcurrentBag<ParametroQueued> listaParametrosDelProceso;
-            ParametrosPeticionUsuarioPorProceso.TryGetValue(procesoQueued.ProcesoId, out listaParametrosDelProceso);
-
-            if (listaParametrosDelProceso == null)
-            {
-                listaParametrosDelProceso = new ConcurrentBag<ParametroQueued> {parametroQueued};
-                ParametrosPeticionUsuarioPorProceso.TryAdd(procesoQueued.ProcesoId, listaParametrosDelProceso);
-            }
-            else
-            {
-                listaParametrosDelProceso.Add(parametroQueued);
-            }
+            ParametrosPeticionUsuario.Add(parametroQueued);
         }
 
-        public static void GenerarMensajePeticionParametros(ProcesoQueued procesoQueued)
+        public PeticionParametroNotificacion GenerarMensajePeticionParametros()
         {
-            ConcurrentBag<ParametroQueued> parametroQueueds;
-
-            if (ParametrosPeticionUsuarioPorProceso.ContainsKey(procesoQueued.ProcesoId))
-                parametroQueueds = ParametrosPeticionUsuarioPorProceso[procesoQueued.ProcesoId];
-            else return;
-
             var nuevoMensajePeticionParametro = new PeticionParametroNotificacion
             {
                 Fecha = DateTime.Now,
-                PlantillaId = procesoQueued.PlantillaQueued.PlantillaId,
-                ProcesoId = procesoQueued.ProcesoId,
-                ParametroProcesoMessages = parametroQueueds
+                //PlantillaId = ProcesoQueued.PlantillaQueued.PlantillaId,
+                ProcesoId = ProcesoQueued.ProcesoId,
+                ParametroProcesoMessages = ParametrosPeticionUsuario
                     .Select(p => new ParametroProcesoMessage
                     {
                         ParametroId = p.ParametroId,
@@ -64,8 +50,7 @@ namespace ExecutionSolution.Core
                     }).ToList()
             };
 
-            NotificadorExterno.EnviarNotificacion(nuevoMensajePeticionParametro);
-            procesoQueued.Pausar();
+            return nuevoMensajePeticionParametro;
         }
     }
 }
