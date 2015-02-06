@@ -10,5 +10,6 @@ namespace ExecutionSolution.Notificador
         public DateTime Fecha { get; set; }
         public int ProcesoId { get; set; }
         public List<ParametroProcesoMessage> ParametroProcesoMessages { get; set; }
+        public TipoNotificacion TipoNotificacion { get; set; }
     }
 }

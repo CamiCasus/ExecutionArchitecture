@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccionesNotificacionFake\EsperaParametroNotificacionAccion.cs" />
     <Compile Include="Fakes\FakeNotificador.cs" />
     <Compile Include="Fakes\CuboProcesoQueued.cs" />
     <Compile Include="Program.cs" />

@@ -11,8 +11,12 @@ namespace ExecutionSolution.Test
 
             var notificador = new FakeNotificador();
             notificador.RecibirPeticion();
+            notificador.RecibirNotificacion();
 
-            Console.ReadLine();
+            while (true)
+            {
+                
+            }
         }
     }
 }

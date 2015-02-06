@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using ExecutionSolution.Messages;
 using System;
@@ -51,6 +52,17 @@ namespace ExecutionSolution.Core
             };
 
             return nuevoMensajePeticionParametro;
+        }
+
+        public void ActualizarParametroProceso(List<ParametroProcesoRespuestaMessage> valoresParametrosUsuario)
+        {
+            foreach (var parametroPeticionUsuario in ParametrosPeticionUsuario)
+            {
+                var valorParametroUsuario =
+                    valoresParametrosUsuario.Find(p => p.ParametroId == parametroPeticionUsuario.ParametroId);
+
+                parametroPeticionUsuario.ValorParametro = valorParametroUsuario.Valor;
+            }
         }
     }
 }

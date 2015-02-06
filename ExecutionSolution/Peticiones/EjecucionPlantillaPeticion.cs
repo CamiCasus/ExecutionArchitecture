@@ -8,7 +8,7 @@ namespace ExecutionSolution.Peticiones
         public DateTime Fecha { get; set; }
         public PlantillaQueued PlantillaQueued { get; set; }
 
-        public void ProcesarNotificacion()
+        public void ProcesarPeticion()
         {
             EjecucionesStorage.RegistrarEjecucionPlantilla(PlantillaQueued);
         }

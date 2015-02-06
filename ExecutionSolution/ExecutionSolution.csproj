@@ -57,6 +57,10 @@
     <Compile Include="EjecucionesStorage.cs" />
     <Compile Include="Extensions\ProcesoListExtension.cs" />
     <Compile Include="Messages\ParametroProcesoMessage.cs" />
+    <Compile Include="Messages\ParametroProcesoRespuestaMessage.cs" />
+    <Compile Include="Notificador\INotificacionAccion.cs" />
+    <Compile Include="Notificador\TipoNotificacion.cs" />
+    <Compile Include="Peticiones\ActualizarParametroProcesoPeticion.cs" />
     <Compile Include="Peticiones\EjecucionPlantillaPeticion.cs" />
     <Compile Include="Notificador\PeticionParametroNotificacion.cs" />
     <Compile Include="Notificador\INotificacion.cs" />

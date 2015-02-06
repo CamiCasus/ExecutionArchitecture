@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ExecutionSolution.Extensions;
 using ExecutionSolution.Notificador;
+using ExecutionSolution.Messages;
 
 namespace ExecutionSolution.Core
 {
@@ -42,6 +43,14 @@ namespace ExecutionSolution.Core
         {
             if (Finish != null)
                 Finish(this, new EventArgs());
+        }
+
+        public void ActualizarParametroProceso(int procesoId, List<ParametroProcesoRespuestaMessage> valoresParametrosUsuario)
+        {
+            var procesoActual = ProcesosQueued.Find(p => p.ProcesoId == procesoId);
+
+            procesoActual.ParametroManager.ActualizarParametroProceso(valoresParametrosUsuario);
+            procesoActual.Reanudar();
         }
     }
 }

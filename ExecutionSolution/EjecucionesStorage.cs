@@ -22,6 +22,11 @@ namespace ExecutionSolution
             Task.Run(() => plantillaQueued.IniciarEjecucion());
         }
 
+        public static PlantillaQueued ObtenerPlantillaEnEjecucion(int plantillaId)
+        {
+            return EjecucionesDePlantillas.ContainsKey(plantillaId) ? EjecucionesDePlantillas[plantillaId] : default(PlantillaQueued);
+        }
+
         private static void OnFinshPlantilla(object plantillaQueued, EventArgs argumentos)
         {
             var plantillaFinalizada = plantillaQueued as PlantillaQueued;

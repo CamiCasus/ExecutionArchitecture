@@ -2,6 +2,6 @@
 {
     public interface IPeticion
     {
-        void ProcesarNotificacion(); 
+        void ProcesarPeticion(); 
     }
 }

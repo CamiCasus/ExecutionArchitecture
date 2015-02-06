@@ -2,23 +2,31 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using ExecutionSolution.AccionesEstados;
 using ExecutionSolution.Core;
 using ExecutionSolution.Notificador;
 using ExecutionSolution.Parametros;
 using ExecutionSolution.Peticiones;
+using ExecutionSolution.Test.AccionesNotificacionFake;
 
 namespace ExecutionSolution.Test.Fakes
 {
     public class FakeNotificador : INotificador
     {
         private readonly ConcurrentQueue<INotificacion> _notificaciones;
-        private readonly ConcurrentQueue<IPeticion> _peticiones; 
+        private readonly ConcurrentQueue<IPeticion> _peticiones;
+
+        private readonly Dictionary<TipoNotificacion, INotificacionAccion> _notificacionAccions;
 
         public FakeNotificador()
         {
             _notificaciones = new ConcurrentQueue<INotificacion>();
             _peticiones = new ConcurrentQueue<IPeticion>();
 
+            _notificacionAccions = new Dictionary<TipoNotificacion, INotificacionAccion>
+            {
+                {TipoNotificacion.EsperaParametro, new EsperaParametroNotificacionAccion()}
+            };
 
             var peticionEjecucionPlantilla = new EjecucionPlantillaPeticion
             {
@@ -33,6 +41,11 @@ namespace ExecutionSolution.Test.Fakes
             _notificaciones.Enqueue(notificacion);
         }
 
+        public void EnviarPeticion(IPeticion peticion)
+        {
+            _peticiones.Enqueue(peticion);
+        }
+
         public void RecibirPeticion()
         {
             Task.Run(() =>
@@ -43,9 +56,9 @@ namespace ExecutionSolution.Test.Fakes
                     _peticiones.TryDequeue(out notificacionActual);
 
                     if (notificacionActual == null)
-                        Thread.Sleep(5000);
+                        Thread.Sleep(200);
                     else
-                        notificacionActual.ProcesarNotificacion();
+                        notificacionActual.ProcesarPeticion();
                 }
             });
         }
@@ -60,11 +73,10 @@ namespace ExecutionSolution.Test.Fakes
                     _notificaciones.TryDequeue(out notificacionActual);
 
                     if (notificacionActual == null)
-                        Thread.Sleep(5000);
+                        Thread.Sleep(200);
                     else
                     {
-                        var aaaa = notificacionActual as PeticionParametroNotificacion;
-                        
+                        _notificacionAccions[notificacionActual.TipoNotificacion].ProcesarNotificacion(notificacionActual, this);
                     }
                 }
             });
@@ -109,7 +121,7 @@ namespace ExecutionSolution.Test.Fakes
 
         public PlantillaQueued GetPlantillaParametrosProceso(INotificador notificador)
         {
-            var plantilla = new PlantillaQueued(notificador) { ProcesosQueued = new List<ProcesoQueued>() };
+            var plantilla = new PlantillaQueued(notificador) { ProcesosQueued = new List<ProcesoQueued>(), PlantillaId = 1};
             var proceso = new CuboProcesoQueued
             {
                 ProcesoId = 1,
